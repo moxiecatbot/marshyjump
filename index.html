@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<style>
+#myContainer {
+  width: 400px;
+  height: 400px;
+  position: relative;
+  background: lightblue;
+  border-radius: 5px;
+}
+#myAnimation {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  background-color: orange;
+  border-radius: 20px;
+  left: 175px;
+  top: 349px;
+  border-style: solid;
+  border-color: black;
+  Border-width: 1px;
+}
+#myAnimationtwo {
+  width: 50px;
+  height: 25px;
+  position: absolute;
+  background-color: brown;
+  border-radius: 5px;
+  left: 350px;
+  top: 380px;
+}
+#ground {
+  width: 400px;
+  height: 20px;
+  position: absolute;
+  background-color: brown;
+  top: 395px;
+}
+#eye {
+  width: 10px;
+  height: 18px;
+  margin: 13px;
+  background-color: black;
+  border-radius: 20px;
+}
+</style>
+<body>
+
+<p>
+<div id="welcomeDiv">
+  Welcome to my game!
+  <button onclick="redMove()">Start Game</button>
+</div>
+<button onclick="myMove()">Jump</button>
+<button onclick="alert('You have now paused the game.');">Pause</button>
+</p>
+
+<div id ="myContainer">
+<div id ="myAnimation"> <div id ="eye"></div></div>
+<div id ="myAnimationtwo"></div>
+<div id = "ground"></div>
+</div>
+
+<script>
+
+var animationTopOffsetMin = 349;
+var animationTopOffsetMax = 355;
+var id = null;
+
+function myMove() {
+  var elem = document.getElementById("myAnimation");
+  //console.log("top = " + elem.style.top);
+  //console.log("offsetTop = " + elem.offsetTop);
+  //console.log("height = " + elem.offsetHeight);
+  var pos = 350;
+  var subby = 5;
+  var flip = false;
+  clearInterval(id);
+  id = setInterval(frame, 7);
+  function frame() {
+    if (pos > 350) {
+    	flip = true;
+    } else if (flip == false) {
+      subby=subby-0.05;
+      pos = pos - subby;
+      elem.style.top = pos + 'px'; 
+    }
+  }
+}
+var idRed = null;
+function redMove() {
+  // When game starts, hide welcome section
+  var welcomeDiv = document.getElementById("welcomeDiv");
+  welcomeDiv.style.visibility = "hidden";
+
+  var obst = document.getElementById("myAnimationtwo");   
+  var posRed = 0;
+  clearInterval(idRed);
+  idRed = setInterval(frame, 4);
+  function frame() {
+    if (posRed == 350) {
+      posRed = 0;
+    } else {
+      posRed++; 
+      //elem.style.top = pos + 'px'; 
+      obst.style.left = posRed + 'px'; 
+    }
+  }
+}
+function collision(target1, target2) {
+
+  //console.log("style top = " + target1.style.top);
+  //console.log("offsetTop = " + target1.offsetTop);
+
+  //console.log("offsetLeft = " + target1.offsetLeft);
+
+  let objecttop = target1.offsetTop;
+  let objectleft = target1.offsetLeft;
+  let objectheight = target1.offsetHeight;
+  let objectwidth = target1.offsetWidth;
+  let object1top = target2.offsetTop;
+  let object1left = target2.offsetLeft;
+  let object1height = target2.offsetHeight;
+  let object1width = target2.offsetWidth;
+
+  let xCollided = (((objectleft > object1left) && ((objectleft - object1left) < (objectwidth/2 + object1width/2))) || ((objectleft < object1left) && ((objectleft - object1left) > - (objectwidth/2 + object1width/2))));
+  let yCollided = (((objecttop > object1top) && ((objecttop - object1top) < (objectheight/2 + object1height/2))) || ((objecttop < object1top) && ((objecttop - object1top) > - (objectheight/2 + object1height/2))));
+
+  if (xCollided == true && yCollided == true) {
+    clearInterval(myInterval);
+    clearInterval(idRed);
+    clearInterval(id);
+    alert('Game Over!');
+  }
+}
+
+//redMove();
+
+const myInterval = setInterval(collision, 100, myAnimation, myAnimationtwo);
+
+document.addEventListener('keydown', function(e) {
+    switch (e.keyCode) {
+        case 37:
+	        break;
+        case 38:
+          //up arrow
+	        var elem = document.getElementById("myAnimation");
+          // Only allow jumping from the ground and not in the air
+          if (elem.offsetTop >= animationTopOffsetMin && elem.offsetTop <= animationTopOffsetMax) {
+            myMove();
+          }
+          break;
+        case 39:
+          break;
+        case 40:
+          //alert('a');
+          //collision(myAnimation, myAnimationtwo);
+          break;
+        case 80:
+	        alert('You have now paused the game.');
+          break;
+    }
+});
+</script>
+
+</body>
+</html>
+
+
